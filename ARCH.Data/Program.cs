@@ -1,4 +1,4 @@
-﻿namespace ARCH.Data
+﻿namespace Arch.Data
 {
     public class Program
     {

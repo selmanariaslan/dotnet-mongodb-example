@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arch.Mongo.Models
 {
-    public class Books: Document
+    public class Books: EntityBase
     {
         //[BsonId]
         //[BsonRepresentation(BsonType.ObjectId)]

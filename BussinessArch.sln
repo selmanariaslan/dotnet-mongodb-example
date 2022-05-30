@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARCH.Services", "ARCH.Api\ARCH.Services.csproj", "{E6804A15-89DB-474F-AACF-B2FBBC7E9FF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arch.Services", "ARCH.Services\Arch.Services.csproj", "{E6804A15-89DB-474F-AACF-B2FBBC7E9FF2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARCH.CoreLibrary", "ARCH.Core\ARCH.CoreLibrary.csproj", "{EB413AF4-D5B5-4CD8-A392-0D2EAEE4E1BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arch.CoreLibrary", "Arch.CoreLibrary\Arch.CoreLibrary.csproj", "{EB413AF4-D5B5-4CD8-A392-0D2EAEE4E1BD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARCH.Data", "ARCH.Data\ARCH.Data.csproj", "{93E9DFEA-A630-451D-86E0-87C5EA962528}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arch.Data", "ARCH.Data\Arch.Data.csproj", "{93E9DFEA-A630-451D-86E0-87C5EA962528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arch.Mongo", "Arch.Mongo\Arch.Mongo.csproj", "{477E572D-4D9B-46E1-B719-CC48BC72FBDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arch.Mongo", "Arch.Mongo\Arch.Mongo.csproj", "{477E572D-4D9B-46E1-B719-CC48BC72FBDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ARCH.Data.Models
+namespace Arch.Data.Models
 {
     public class BookStoreDatabaseSettings
     {

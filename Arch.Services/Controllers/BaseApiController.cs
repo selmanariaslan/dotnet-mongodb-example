@@ -1,8 +1,8 @@
 ﻿using Arch.CoreLibrary.Entities;
-using Arch.Mongo.Managers;
-using Arch.Mongo.Models;
-using Arch.Mongo.Models.Logs;
-using Microsoft.AspNetCore.Http;
+using Arch.CoreLibrary.Repositories;
+using Arch.Data;
+//using Arch.Mongo.Managers;
+//using Arch.Mongo.Models.Logs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -12,18 +12,18 @@ namespace Arch.Services.Controllers
     [ApiController]
     public abstract class BaseApiController : ControllerBase
     {
-        protected readonly IServiceManager _Service;
+        protected readonly CoreLibrary.Managers.IServiceManager _Service;
         protected readonly IMemoryCache _Cache;
-        protected readonly IGenericRepository<PerformanceLog> _LogService;
+        protected readonly IGenericRepository<LogManagementContext> _LogService;
 
-        public BaseApiController(IServiceManager service, IMemoryCache cache, IGenericRepository<PerformanceLog> logService)
+        public BaseApiController(CoreLibrary.Managers.IServiceManager service, IMemoryCache cache, IGenericRepository<LogManagementContext> logService)
         {
             _Service = service;
             _Cache = cache;
             _LogService = logService;
         }
 
-        protected IActionResult Api<T>(ResponseBase<T> response, bool controlData = true)
+        protected async Task<IActionResult> Api<T>(ResponseBase<T> response, bool controlData = true)
         {
             if (response.Status == ServiceResponseStatuses.Success)
             {
@@ -37,7 +37,7 @@ namespace Arch.Services.Controllers
                 }
                 else
                 {
-                    return StatusCode(500, response);
+                    return StatusCode(409, response);
                 }
             }
         }

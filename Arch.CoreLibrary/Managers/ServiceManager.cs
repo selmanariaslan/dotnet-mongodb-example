@@ -23,7 +23,7 @@ namespace Arch.CoreLibrary.Managers
         ResponseBase<T> ServiceResponse<T>(T data, ServiceResponseStatuses status, Dictionary<string, string> messages, string userMessage);
         ResponseBase<T> SuccessServiceResponse<T>(T data, string userMessage = "İşleminiz başarıyla gerçekleşti.");
         ResponseBase<T> WarningServiceResponse<T>(string userMessage = "İşleminiz gerçşekleştirilemedi, Lütfen birazdan tekrar deneyin.");
-        ResponseBase<T> WarningServiceResponse<T>(T data, string userMessage = "İşleminiz gerçşekleştirilemedi, Lütfen birazdan tekrar deneyin.");
+        ResponseBase<T> WarningServiceResponse<T>(T data, string userMessage = "İşleminiz gerçekleştirilemedi, Lütfen birazdan tekrar deneyin.");
     }
 
     public class ServiceManager : IServiceManager

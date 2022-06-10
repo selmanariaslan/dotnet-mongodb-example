@@ -13,40 +13,16 @@ namespace Arch.CoreLibrary.Utils.Security
     {
         public static string GenerateJwtToken(string userId, string userRole, int expires = 7, string secretKey = "Secret", bool isEncryptedSecretKey = true)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
             var appConfigRoot = ConfigUtils.GetConfigurationRoot();
 
-            string sKey = appConfigRoot.GetSection("Application")[secretKey];
+            var issuer = appConfigRoot.GetSection("JWT")["Issuer"];
+            var audience = appConfigRoot.GetSection("JWT")["Audience"];
+            string sKey = appConfigRoot.GetSection("JWT")[secretKey];
+
             if (isEncryptedSecretKey)
             {
                 sKey = new CryptoUtils().DecryptString(sKey);
             }
-
-            var key = Encoding.ASCII.GetBytes(sKey);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, userId),
-                    new Claim(ClaimTypes.Role, userRole ?? "")
-                }),
-                Expires = DateTime.UtcNow.AddDays(expires),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
-
-        public static string GenerateJwtTokenNew(string userId, string userRole, int expires = 7)
-        {
-            var appConfigRoot = ConfigUtils.GetConfigurationRoot();
-
-            var issuer = appConfigRoot.GetSection("Application")["Issuer"];
-            var audience = appConfigRoot.GetSection("Application")["Audience"];
-            string sKey = appConfigRoot.GetSection("Application")["Secret"];
-
-            sKey = new CryptoUtils().DecryptString(sKey);
-
 
             var key = Encoding.ASCII.GetBytes(sKey);
 
@@ -79,7 +55,7 @@ namespace Arch.CoreLibrary.Utils.Security
             }),
                 // the life span of the token needs to be shorter and utilise refresh token to keep the user signedin
                 // but since this is a demo app we can extend it to fit our current need
-                Expires = DateTime.UtcNow.AddHours(6),
+                Expires = DateTime.UtcNow.AddHours(expires),
                 Audience = audience,
                 Issuer = issuer,
                 // here we are adding the encryption alogorithim information which will be used to decrypt our token
@@ -91,5 +67,36 @@ namespace Arch.CoreLibrary.Utils.Security
             //var jwtToken = jwtTokenHandler.WriteToken(token);
             return jwtTokenHandler.WriteToken(token);
         }
+
+
+
+
+
+
+        //    public static string GenerateJwtToken(string userId, string userRole, int expires = 7, string secretKey = "Secret", bool isEncryptedSecretKey = true)
+        //    {
+        //        var tokenHandler = new JwtSecurityTokenHandler();
+        //        var appConfigRoot = ConfigUtils.GetConfigurationRoot();
+
+        //        string sKey = appConfigRoot.GetSection("Application")[secretKey];
+        //        if (isEncryptedSecretKey)
+        //        {
+        //            sKey = new CryptoUtils().DecryptString(sKey);
+        //        }
+
+        //        var key = Encoding.ASCII.GetBytes(sKey);
+        //        var tokenDescriptor = new SecurityTokenDescriptor
+        //        {
+        //            Subject = new ClaimsIdentity(new Claim[]
+        //            {
+        //                new Claim(ClaimTypes.Name, userId),
+        //                new Claim(ClaimTypes.Role, userRole ?? "")
+        //            }),
+        //            Expires = DateTime.UtcNow.AddDays(expires),
+        //            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        //        };
+        //        var token = tokenHandler.CreateToken(tokenDescriptor);
+        //        return tokenHandler.WriteToken(token);
+        //    }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Arch.CoreLibrary.Entities;
 using Arch.CoreLibrary.Utils.Security;
+using Arch.Data;
 using Arch.Mongo.Managers;
 using Arch.Mongo.Models;
 using Arch.Mongo.Models.Logs;
@@ -14,10 +15,10 @@ namespace Arch.Services.Controllers
 {
     public class AuthenticateController : BaseApiController
     {
-        private readonly IGenericRepository<Books> _booksService;
-        public AuthenticateController(IGenericRepository<Books> bookService, IServiceManager serviceManager, IMemoryCache cache, IGenericRepository<PerformanceLog> logService) : base(serviceManager, cache, logService)
+        //private readonly IGenericRepository<Books> _booksService;
+        public AuthenticateController(/*IGenericRepository<Books> bookService, */CoreLibrary.Managers.IServiceManager serviceManager, IMemoryCache cache, CoreLibrary.Repositories.IGenericRepository<LogManagementContext> logService) : base(serviceManager, cache, logService)
         {
-            _booksService = bookService;
+            //_booksService = bookService;
         }
 
         [HttpPost]
@@ -25,7 +26,7 @@ namespace Arch.Services.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel request)
         {
             var response = new ResponseBase<User>();
-            _booksService.Run(CoreLibrary.Repositories.ProjectEnvironment.Service,
+            _LogService.Run(CoreLibrary.Repositories.ProjectEnvironment.Service,
                 "", action: () =>
                 {
                     var user = GetUser(request.Username);
@@ -34,20 +35,20 @@ namespace Arch.Services.Controllers
                         var userRole = GetRole(user.Id);
                         user.Role = userRole;
 
-                        var token = TokenUtils.GenerateJwtTokenNew(user.Id.ToString(), userRole: userRole);
+                        var token = TokenUtils.GenerateJwtToken(user.Id.ToString(), userRole: userRole);
                         user.Token = token;
                         response = _Service.SuccessServiceResponse(user);
                         response.Status = ServiceResponseStatuses.Success;
                     }
                     else
                     {
-                        _Service.WarningServiceResponse<User>("Kullanıcı adı veya parola yanlış!");
+                        response = _Service.WarningServiceResponse<User>("Kullanıcı adı veya parola yanlış!");
                         response.Status = ServiceResponseStatuses.Warning;
                     }
                 }, errorAction: (ex) => response = _Service.ErrorServiceResponse<User>(ex),
             requestModel: request,
             responseModel: response);
-            return Api(response);
+            return await Api(response, false);
         }
 
         private User GetUser(string username)

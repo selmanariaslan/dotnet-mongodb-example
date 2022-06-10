@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ARCH.Data\Arch.Data.csproj" />
     <ProjectReference Include="..\Arch.Mongo\Arch.Mongo.csproj" />
   </ItemGroup>
 

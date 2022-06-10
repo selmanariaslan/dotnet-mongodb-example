@@ -1,6 +1,7 @@
 ﻿using Arch.CoreLibrary.Entities;
 using Arch.CoreLibrary.Entities.CommonModels;
 using Arch.CoreLibrary.Entities.Log;
+using Arch.CoreLibrary.Managers;
 using Arch.CoreLibrary.Utils;
 using Arch.CoreLibrary.Utils.Collections;
 using Arch.CoreLibrary.Utils.Security;
@@ -546,7 +547,7 @@ namespace Arch.CoreLibrary.Repositories
             try
             {
                 action();
-#if !DEBUG
+//#if !DEBUG
                 /// Performance Log DB
                 if (watch.IsRunning)
                 {
@@ -572,12 +573,12 @@ namespace Arch.CoreLibrary.Repositories
                             this._Insert(log);
                             this._Save();
 
-                            sendPerformanceEmail(log, "PERFORMANCE");
+                            //sendPerformanceEmail(log, "PERFORMANCE");
                         }
                         catch (Exception ex)
                         {
                             logExceptionToFile(new ExceptionLog { MethodName = log.MethodName, Username = log.Username, ExceptionMessage = "Performance logunu DB ye yazarken hata oluştu." }, ex);
-                            sendPerformanceEmail(log, "PERFORMANCE - FILELOG");
+                            //sendPerformanceEmail(log, "PERFORMANCE - FILELOG");
                         }
                         finally
                         {
@@ -585,11 +586,11 @@ namespace Arch.CoreLibrary.Repositories
                         }
                     }
                 }
-#endif
+//#endif
             }
             catch (Exception ex)
             {
-#if !DEBUG
+//#if !DEBUG
                 /// Error Log DB
                 var log = new ExceptionLog
                 {
@@ -613,18 +614,18 @@ namespace Arch.CoreLibrary.Repositories
                     this._Save();
                     ServiceManager.ExceptionLogId = log.Id;
 
-                    sendExceptionEmail(log, "HATA");
+                    //sendExceptionEmail(log, "HATA");
                 }
                 catch (Exception lastEx)
                 {
                     logExceptionToFile(log, lastEx);
-                    sendExceptionEmail(log, "HATA - FILELOG");
+                    //sendExceptionEmail(log, "HATA - FILELOG");
                 }
                 finally
                 {
                     Dispose();
                 }
-#endif
+//#endif
                 errorAction?.Invoke(ex);
             }
             finally

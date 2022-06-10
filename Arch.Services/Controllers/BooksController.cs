@@ -1,4 +1,5 @@
 ﻿using Arch.CoreLibrary.Entities;
+using Arch.Data;
 using Arch.Mongo.Managers;
 using Arch.Mongo.Models;
 using Arch.Mongo.Models.CommonModels;
@@ -13,7 +14,7 @@ namespace Arch.Services.Controllers
     {
         private readonly IGenericRepository<Books> _booksService;
 
-        public BooksController(IGenericRepository<Books> bookService, IServiceManager serviceManager, IMemoryCache cache, IGenericRepository<PerformanceLog> logService) : base(serviceManager, cache, logService)
+        public BooksController(IGenericRepository<Books> bookService, CoreLibrary.Managers.IServiceManager serviceManager, IMemoryCache cache, CoreLibrary.Repositories.IGenericRepository<LogManagementContext> logService) : base(serviceManager, cache, logService)
         {
             _booksService = bookService;
         }
@@ -38,7 +39,7 @@ namespace Arch.Services.Controllers
             //requestModel: request,
             responseModel: response);
 
-            return Api(response);
+            return await Api(response);
         }
 
         [HttpGet("{id:length(24)}")]
@@ -60,18 +61,7 @@ namespace Arch.Services.Controllers
             //requestModel: request,
             responseModel: response);
 
-            return Api(response);
-
-
-
-            //var book = _booksService.FindById(id);
-
-            //if (book is null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return Ok(book);
+            return await Api(response);
         }
 
         [HttpPost]
@@ -84,25 +74,20 @@ namespace Arch.Services.Controllers
                 "BookService",
                 action: () =>
                 {
-                    var res= _booksService.InsertOneAsync(newBook);
+                    var res = _booksService.InsertOneAsync(newBook);
 
                     if (res.IsCompleted)
                     {
                         response = _Service.SuccessServiceResponse(result);
                     }
-                        
+
                     else response = _Service.WarningServiceResponse(result, "Kayıt bulunamadı!");
                 },
                 errorAction: (ex) => response = _Service.ErrorServiceResponse<UpsertModel>(ex),
             //requestModel: request,
             responseModel: response);
 
-            return Api(response);
-
-
-            await _booksService.InsertOneAsync(newBook);
-
-            return CreatedAtAction(nameof(Get), new { id = newBook.Id }, newBook);
+            return await Api(response);
         }
 
         [HttpPut("{id:length(24)}")]

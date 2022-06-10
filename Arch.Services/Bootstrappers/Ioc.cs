@@ -1,4 +1,12 @@
-﻿namespace Arch.Services.Bootstrappers
+﻿using Arch.CoreLibrary.Managers;
+using Arch.CoreLibrary.Repositories;
+using Arch.Data;
+using Arch.Mongo.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+
+namespace Arch.Services.Bootstrappers
 {
     public static class Ioc
     {
@@ -9,43 +17,24 @@
         }
         private static void addDependencies(IServiceCollection services)
         {
-            //services.AddScoped<IGenericRepository<AlonetContext>, GenericRepository<AlonetContext>>();
-            //services.AddScoped<IGenericRepository<AlonetCommonContext>, GenericRepository<AlonetCommonContext>>();
-            //services.AddScoped<IGenericRepository<AlonetLogManagementContext>, GenericRepository<AlonetLogManagementContext>>();
-            //services.AddScoped<IGenericRepository<AlonetContactManagementContext>, GenericRepository<AlonetContactManagementContext>>();
-            //services.AddScoped<IGenericRepository<AlonetTicketManagementContext>, GenericRepository<AlonetTicketManagementContext>>();
+            services.AddScoped<IGenericRepository<LogManagementContext>, GenericRepository<LogManagementContext>>();
 
-            //services.AddScoped<IServiceManager, ServiceManager>();
+            services.AddScoped<IMongoDbSettings>(serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
+
+            services.AddScoped(typeof(Mongo.Managers.IGenericRepository<>), typeof(Mongo.Managers.GenericRepository<>));
+            services.AddScoped(typeof(Mongo.Managers.IServiceManager), typeof(Mongo.Managers.ServiceManager));
+            services.AddScoped(typeof(IMemoryCache), typeof(MemoryCache));
+            services.AddScoped<IServiceManager, ServiceManager>();
         }
 
         private static void addDbContexts(IServiceCollection services)
         {
-            //var BookStoreCnn = services.Configure <List<MongoDbSettings>>()
+            //var mongoConn = builder.Configuration.GetSection("BookStore");
+            //services.Configure<MongoDbSettings>();
 
-            //    .Build();
-
-
-            //services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
-            //services.AddSingleton<IMongoDbSettings>(serviceProvider =>
-            //    serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-
-
-
-
-            //var alonetCnn = DatabaseConfig.GetConnectionString("Alonet");
-            //services.AddDbContext<AlonetContext>(options => options.UseSqlServer(alonetCnn));
-
-            //var alonetCommonCnn = DatabaseConfig.GetConnectionString("AlonetCommon");
-            //services.AddDbContext<AlonetCommonContext>(options => options.UseSqlServer(alonetCommonCnn));
-
-            //var alonetLogManagementCnn = DatabaseConfig.GetConnectionString("AlonetLogManagement");
-            //services.AddDbContext<AlonetLogManagementContext>(options => options.UseSqlServer(alonetLogManagementCnn));
-
-            //var alonetContactManagementCnn = DatabaseConfig.GetConnectionString("AlonetContactManagement");
-            //services.AddDbContext<AlonetContactManagementContext>(options => options.UseSqlServer(alonetContactManagementCnn));
-
-            //var alonetTicketManagementCnn = DatabaseConfig.GetConnectionString("AlonetTicketManagement");
-            //services.AddDbContext<AlonetTicketManagementContext>(options => options.UseSqlServer(alonetTicketManagementCnn));
+            var logManagementCnn = DatabaseConfig.GetConnectionString("LogManagement");
+            services.AddDbContext<LogManagementContext>(options => options.UseSqlServer(logManagementCnn));
         }
     }
 }

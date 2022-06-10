@@ -1,35 +1,19 @@
-using Arch.CoreLibrary.Utils.Security;
-using Arch.Mongo.Managers;
 using Arch.Mongo.Models;
 using Arch.Services.Bootstrappers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("BookStore"));
-builder.Services.AddScoped<IMongoDbSettings>(serviceProvider =>
-    serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
 
-builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("LogManagement"));
-builder.Services.AddScoped<IMongoDbSettings>(serviceProvider =>
-    serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-
-
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped(typeof(IServiceManager), typeof(ServiceManager));
-builder.Services.AddScoped(typeof(IMemoryCache), typeof(MemoryCache));
+Ioc.RegisterScopes(builder.Services);
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 options.JsonSerializerOptions.PropertyNamingPolicy = null
-); ;
+);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -59,26 +43,9 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 // Adding Jwt Bearer
-//Auth.AddJwtConfig(builder.Services, configuration);
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                 .AddJwtBearer(options =>
-                 {
-                     var secretKey = new CryptoUtils().DecryptString(configuration["Application:Secret"]);
-                     var key = Encoding.ASCII.GetBytes(secretKey);
-                     options.TokenValidationParameters =
-                         new TokenValidationParameters
-                         {
-                             ValidateIssuer = true,
-                             ValidateAudience = true,
-                             ValidateLifetime = true,
-                             ValidAudience = configuration["Application:Audience"],
-                             ValidIssuer = configuration["Application:Issuer"],
-                             IssuerSigningKey = new SymmetricSecurityKey(key)
-                         };
-                 });
-
+Auth.AddJwtConfig(builder.Services, configuration);
 
 var app = builder.Build();
 
@@ -98,8 +65,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-//app.Run(async context =>
-//{
-//    context.Response.StatusCode = 404;
-//    await context.Response.WriteAsync($"ALONET |{Configuration["Application:Name"]}|").ConfigureAwait(false);
-//});
+app.Run(async context =>
+{
+    context.Response.StatusCode = 404;
+    await context.Response.WriteAsync($"ILA |{configuration["Application:Name"]}|").ConfigureAwait(false);
+});

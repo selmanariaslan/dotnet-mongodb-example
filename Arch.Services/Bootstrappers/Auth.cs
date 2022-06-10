@@ -9,7 +9,7 @@ namespace Arch.Services.Bootstrappers
     {
         public static void AddJwtConfig(IServiceCollection services, IConfiguration configuration)
         {
-            var secretKey = new CryptoUtils().DecryptString(configuration["Application:Secret"]);
+            var secretKey = new CryptoUtils().DecryptString(configuration["JWT:Secret"]);
             var key = Encoding.ASCII.GetBytes(secretKey);
             services.AddAuthentication(x =>
             {
@@ -22,10 +22,12 @@ namespace Arch.Services.Bootstrappers
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidAudience = configuration["JWT:Audience"],
+                    ValidIssuer = configuration["JWT:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
             });
         }
